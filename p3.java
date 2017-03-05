@@ -4,8 +4,10 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class CCCS
+public class CCCS 
 {
 	private static ServerSocket server;
 
@@ -41,7 +43,7 @@ public class CCCS
 					}
 				}
 				if(foundEmptyThread)
-					threads.set(emptyThreadIndex,new ThreadedSocket(socket)).start();
+					threads.set(emptyThreadIndex, new ThreadedSocket(socket)).start();
 			}
 
 		} 
@@ -75,17 +77,17 @@ public class CCCS
 
 				output = new ObjectOutputStream(socket.getOutputStream());
 
-				
-					output.writeObject("Enter Your Nickname:");
-					name = (String) input.readObject();
-					name = name.trim();
-					if (name == null) 
-					{
-						name = "anonymous";
-					}					
+
+				output.writeObject("Enter Your Nickname:");
+				name = (String) input.readObject();
+				name = name.trim();
+				if (name == null) 
+				{
+					name = "anonymous";
+				}					
 
 				output.writeObject("Your nickname is: " + name);
-				
+
 				while (runThread) 
 				{
 					String message = (String) input.readObject();
@@ -101,47 +103,64 @@ public class CCCS
 						String[] words = message.split("\\s");
 						assert( words.length > 1);
 						String newName = words[1];
-						newName.trim();
 						//assert has no spaces
-						name = newName;
+						Pattern pattern = Pattern.compile("\\s");
+						Matcher matcher = pattern.matcher(newName);
+						boolean containsSpaces = matcher.find();
+						if(containsSpaces)
+							System.out.println("Nickname cannot contain spaces");
+						else
+							name = newName;
 					}
 					else if (message.startsWith("/dm")) 
 					{
 						String[] words = message.split("\\s");
-						assert( words.length > 2);
-						//words[1] = words[1].trim();
-						String to = words[1];
-						String msg = null;
-						for(int i = 1; i < words.length; i++)
-						{  
-							msg += words[1];
-						}
-						assert(msg.length() > 0);
-
-						if (words.length > 1 && msg != null) 
+						if(words.length < 3)
 						{
-							if (!msg.isEmpty()) 
+							System.out.println("Incorrect syntax for /dm");
+						}
+						else
+						{
+							String to = words[1];
+							//assert to does not contain spaces
+							Pattern pattern = Pattern.compile("\\s");
+							Matcher matcher = pattern.matcher(to);
+							boolean containsSpaces = matcher.find();
+
+							if(containsSpaces)
+								System.out.println("Incorrect name syntax in /dm");
+							else
 							{
-								synchronized (this) 
+								String msg = null;
+								for(int i = 2; i < words.length; i++)
+								{  
+									msg += words[i];
+								}
+								//assert msg is not just spaces
+								boolean onlyWhiteSpaces = msg.matches("^\\s*$");
+								if(onlyWhiteSpaces)
+									System.out.println("Message cannot contain only spaces.");
+								else
 								{
-									for (ThreadedSocket s : threads) 
-										if (s != null && s != this
-										&& s.name != null
-										&& s.name.equals(to))
-										{
-											s.output.writeObject(name + ": " + msg);
-											this.output.writeObject(name + ": " + msg);
-										}
+									synchronized (this) 
+									{
+										for (ThreadedSocket s : threads) 
+											if (s != this && s.name.equals(to))
+											{
+												s.output.writeObject(name + ": " + msg);
+												this.output.writeObject(name + ": " + msg);
+											}
+									}
 								}
 							}
 						}
 					}
-					else
+					else //send message to Everyone
 					{
 						synchronized(this)
 						{
 							for (ThreadedSocket s : threads) 
-								if(s != null && s.name != null)
+								if(s.name != null)
 									s.output.writeObject(name + ": " + message);
 
 						}
@@ -157,6 +176,7 @@ public class CCCS
 			{
 				try 
 				{
+					name = null;
 					for (ThreadedSocket s : threads) 
 						if(s == this)
 							s = null;
