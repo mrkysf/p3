@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 
-public class ChattyChatChatServer 
+public class CCCServer 
 {
 	private static HashSet<String> names = new HashSet<String>();
 
