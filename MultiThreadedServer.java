@@ -3,19 +3,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashSet;
+import java.util.ArrayList;
 
-public class CCCServer 
+public class ChattyChatChatServer 
 {
-	private static HashSet<String> names = new HashSet<String>();
-
-	private static HashSet<ObjectOutputStream> OutputStreams = new HashSet<ObjectOutputStream>();
-
 	private static ServerSocket server;
 
-	private static int numThreads = 100; 
-
-	private static final ThreadedSocket[] threads = new ThreadedSocket[numThreads];
+	private static ArrayList<ThreadedSocket> threads = new ArrayList<ThreadedSocket>();
 
 	public static void main(String[] args) throws Exception 
 	{
@@ -38,19 +32,16 @@ public class CCCServer
 				int emptyThreadIndex = 0;
 				boolean foundEmptyThread = false;
 				Socket socket = server.accept();
-				for(int i=0; i < numThreads; i++)
+				for(int i=0; i < threads.size(); i++)
 				{
-					//.isAlive()
-					if (threads[i]==null && !foundEmptyThread)
+					if (threads.get(i)==null && !foundEmptyThread)
 					{
 						emptyThreadIndex = i;
 						foundEmptyThread = true;
 					}
 				}
 				if(foundEmptyThread)
-					(threads[emptyThreadIndex] = new ThreadedSocket(socket)).start();
-				else //reach maxed num threads
-					socket.close();	
+					threads.set(emptyThreadIndex,new ThreadedSocket(socket)).start();
 			}
 
 		} 
@@ -87,23 +78,19 @@ public class CCCServer
 				
 					output.writeObject("Enter Your Nickname:");
 					name = (String) input.readObject();
-					
+					name = name.trim();
 					if (name == null) 
 					{
 						name = "anonymous";
-					}
-							names.add(name);
-					
+					}					
 
 				output.writeObject("Your nickname is: " + name);
-				OutputStreams.add(output);
-
+				
 				while (runThread) 
 				{
 					String message = (String) input.readObject();
 					if (message == null) 
 					{
-						return;
 					}
 					else if(message.startsWith("/quit")) 
 					{
@@ -122,6 +109,7 @@ public class CCCServer
 					{
 						String[] words = message.split("\\s");
 						assert( words.length > 2);
+						//words[1] = words[1].trim();
 						String to = words[1];
 						String msg = null;
 						for(int i = 1; i < words.length; i++)
@@ -129,7 +117,6 @@ public class CCCServer
 							msg += words[1];
 						}
 						assert(msg.length() > 0);
-						//this.socket.name.equals(to);
 
 						if (words.length > 1 && msg != null) 
 						{
@@ -137,24 +124,27 @@ public class CCCServer
 							{
 								synchronized (this) 
 								{
-									for (int i = 0; i < numThreads; i++) 
-									{
-										if (threads[i] != null && threads[i] != this
-												&& threads[i].name != null
-												&& threads[i].name.equals(to))
+									for (ThreadedSocket s : threads) 
+										if (s != null && s != this
+										&& s.name != null
+										&& s.name.equals(to))
 										{
-											threads[i].output.writeObject(name + ": " + msg);
+											s.output.writeObject(name + ": " + msg);
 											this.output.writeObject(name + ": " + msg);
 										}
-									}
 								}
 							}
 						}
 					}
 					else
 					{
-						for (ObjectOutputStream objectOutputStream : OutputStreams) 
-							objectOutputStream.writeObject(name + ": " + message);
+						synchronized(this)
+						{
+							for (ThreadedSocket s : threads) 
+								if(s != null && s.name != null)
+									s.output.writeObject(name + ": " + message);
+
+						}
 					}
 				} 
 
@@ -167,18 +157,13 @@ public class CCCServer
 			{
 				try 
 				{
-					if (name != null) 
-					{
-						names.remove(name);
-					}
-					if (output != null) 
-					{
-						OutputStreams.remove(output);
-					}
+					for (ThreadedSocket s : threads) 
+						if(s == this)
+							s = null;
 					input.close();
 					output.close();
 					socket.close();
-					System.out.println("Session has ended."); 
+					System.out.println("Chat Ended"); 
 				} 
 				catch (IOException e) 
 				{
