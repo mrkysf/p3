@@ -1,4 +1,3 @@
-```json
 #Server Files
 * ChattyChatChatServer.java
 * ChatServer.java
@@ -42,3 +41,4 @@
 1. Open CMD and change directory to ChattyChatChat\bin
 2. Run the following command to start the client:
    **java ChattyChatChatClient localhost 9001**
+```json
