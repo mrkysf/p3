@@ -12,13 +12,13 @@ import java.util.List;
  * <br/><br/>
  * 
  * + PostCondition: 
- * The Server will call this Command's {@link #execute(ServiceProvider)} 
- * method after providing it with a {@link ServiceProvider} that contains
+ * The Server will call this Command's {@link #execute(ServiceDataProvider)} 
+ * method after providing it with a {@link ServiceDataProvider} that contains
  * all the objects needed by the function to perform its task.
  * 
  * <br/><br/>
  * 
- * + {@link ServiceProvider} information needed by this command: <br/>
+ * + {@link ServiceDataProvider} information needed by this command: <br/>
  * (1) ChatServer instance of the running server                 <br/>
  * (2) ClientListener instance of the client who sent the message
  */
@@ -43,7 +43,7 @@ public final class ServerMessageCommand implements ICommand {
 	}
 
 	@Override
-	public void execute(ServiceProvider serviceProvider) {
+	public void execute(ServiceDataProvider serviceProvider) {
 
 		// Get Server and Client objects
 		ChatServer     server = serviceProvider.get_service(ChatServer.class);
