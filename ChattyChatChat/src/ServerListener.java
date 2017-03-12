@@ -3,16 +3,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
+/**
+ * Implementation of Server Listener thread that will listen
+ * for Server commands and executes them on the Client.
+ */
 public final class ServerListener extends Thread {
 
-	private Socket             socket;
-	private ObjectInputStream  input;
-	private ServiceProvider    serviceProvider;
+	private Socket              socket;
+	private ObjectInputStream   input;
+	private ServiceDataProvider serviceProvider;
 	
-	public ServerListener (Socket socket, ServiceProvider provider) throws IOException {
+	public ServerListener (Socket socket, ServiceDataProvider provider) throws IOException {
 		this.socket          = socket;
 		this.input           = new ObjectInputStream(this.socket.getInputStream());
-		this.serviceProvider = new ServiceProvider(provider);
+		this.serviceProvider = new ServiceDataProvider(provider);
 		this.serviceProvider.add_service(ServerListener.class, this);
 	}
 	
@@ -20,6 +24,11 @@ public final class ServerListener extends Thread {
 		return this.socket;
 	}
 	
+	/**
+	 * Listens on the client socket for incoming commands from the server. Once
+	 * it receives a command, it executes it on the client.
+	 */
+	@Override
 	public void run() {
 		try {
 			while(true) {

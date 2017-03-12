@@ -10,13 +10,13 @@
  * <br/><br/>
  * 
  * + PostCondition: 
- * The Client will call this Command's {@link #execute(ServiceProvider)} 
- * method after providing it with a {@link ServiceProvider} that contains
+ * The Client will call this Command's {@link #execute(ServiceDataProvider)} 
+ * method after providing it with a {@link ServiceDataProvider} that contains
  * all the objects needed by the function to perform its task.
  * 
  * <br/><br/>
  * 
- * + {@link ServiceProvider} information needed by this command: <br/>
+ * + {@link ServiceDataProvider} information needed by this command: <br/>
  * (1) ChatClient instance of the running client
  */
 public final class ClientMessageCommand implements ICommand {
@@ -38,7 +38,7 @@ public final class ClientMessageCommand implements ICommand {
 	}
 	
 	@Override
-	public void execute(ServiceProvider serviceProvider) {
+	public void execute(ServiceDataProvider serviceProvider) {
 		ChatClient client = serviceProvider.get_service(ChatClient.class);
 		client.get_standardOutput().println(String.format("%s: %s", this.sender, this.message));
 	}

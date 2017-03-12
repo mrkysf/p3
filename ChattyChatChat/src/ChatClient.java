@@ -6,16 +6,19 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * ChattyChatChat Client Implementation
+ */
 public final class ChatClient {
 
-	private String             hostname;
-	private int                port;
-	private Socket             clientSocket;
-	private ObjectOutputStream socketOutput;
-	private ServerListener     serverListener;
-	private Scanner            standardInput;
-	private PrintStream        standardOutput;
-	private ServiceProvider    serviceProvider;
+	private String              hostname;
+	private int                 port;
+	private Socket              clientSocket;
+	private ObjectOutputStream  socketOutput;
+	private ServerListener      serverListener;
+	private Scanner             standardInput;
+	private PrintStream         standardOutput;
+	private ServiceDataProvider serviceProvider;
 	
 	public ChatClient(String host, int portNumber) throws UnknownHostException, IOException {
 		this.hostname        = host;
@@ -24,7 +27,7 @@ public final class ChatClient {
 		this.standardOutput  = System.out;
 		this.clientSocket    = new Socket(this.hostname, this.port);
 		this.socketOutput    = new ObjectOutputStream(this.clientSocket.getOutputStream());
-		this.serviceProvider = new ServiceProvider();
+		this.serviceProvider = new ServiceDataProvider();
 		this.serviceProvider.add_service(ChatClient.class, this);
 		this.serverListener  = new ServerListener(this.clientSocket, this.serviceProvider);
 	}
@@ -33,12 +36,27 @@ public final class ChatClient {
 		return this.standardOutput;
 	}
 	
+	/**
+	 * Starts the {@link #serverListener} thread to listen for commands coming
+	 * from the Server, and then, it waits on standard input for user input.
+	 * Once the user inputs a message/command, it parses it and sends out the
+	 * necessary command to the Server.
+	 * 
+	 * @throws IOException
+	 *             Any exception thrown by the {@link #socketOutput} stream.
+	 * @throws InterruptedException
+	 *             Any thread has interrupted the {@link #serverListener}
+	 *             thread.
+	 */
 	public void start() throws IOException, InterruptedException {
 		try {
 			// Start ServerListener on separate thread to listen for commands 
 			// coming from server	
 			this.serverListener.start();
 		
+			System.out.println(String.format("Connected to server on '%s' machine at port %d",
+					           this.hostname, this.port));
+			
 			while (standardInput.hasNext()) {
 				String commandText = standardInput.nextLine();
 				
@@ -60,7 +78,11 @@ public final class ChatClient {
 		}
 	}
 
-	public void stop() {
+	/**
+	 * Closes {@link #clientSocket}, if it is still open, along with all its
+	 * streams.
+	 */
+	public synchronized void stop() {
 		try {
 			if (!this.clientSocket.isClosed()) {
 				System.out.println("Closing client socket...");
@@ -68,11 +90,19 @@ public final class ChatClient {
 				this.clientSocket.getInputStream().close();
 				this.clientSocket.close();
 			}
-		} catch (IOException ex) {
-			// No need to do anything else here.
-		}
+		} catch (IOException ex) {}
 	}
 	
+	/**
+	 * Parses the {@code commandText} and returns the corresponding command that
+	 * needs to be sent to the server.
+	 *
+	 * @param commandText
+	 *            - Message/Command input by the user
+	 * 
+	 * @return {@link ICommand} or null if the {@code commandText} corresponds
+	 *         to the QUIT user command.
+	 */
 	private static ICommand InitializeCommand(String commandText) {
 		ChatCommands commandType = ChatCommands.convert(commandText);
 		List<String> commandArgs = ChatCommands.get_args(commandText);
@@ -92,7 +122,7 @@ public final class ChatClient {
 			case QUIT:
 			{
 				// This case should be handled directly
-				// by the main function. So, return null.
+				// by the start() function. So, return null.
 				break;
 			}
 			default:

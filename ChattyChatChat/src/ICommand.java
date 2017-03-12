@@ -13,5 +13,5 @@ public interface ICommand extends Serializable {
 	 *            Contains all objects needed by this execute function to
 	 *            perform its task.
 	 */
-	public void execute(ServiceProvider serviceProvider);	
+	public void execute(ServiceDataProvider serviceProvider);	
 }
