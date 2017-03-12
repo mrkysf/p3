@@ -30,14 +30,14 @@
 
 #Instructions to build project
 1. Download ChattyChatChat project and open it in eclipse
-2. Select ** Project -> Build ** to build the project
+2. Select **Project -> Build** to build the project
 
 #Instructions to run the server
 1. Open CMD and change directory to ChattyChatChat\bin
 2. Run the following command to start the server:
-   ** java ChattyChatChatServer 9001 **
+   **java ChattyChatChatServer 9001**
 
 #Instructions to run the client
 1. Open CMD and change directory to ChattyChatChat\bin
 2. Run the following command to start the client:
-   ** java ChattyChatChatClient localhost 9001 **
+   **java ChattyChatChatClient localhost 9001**
