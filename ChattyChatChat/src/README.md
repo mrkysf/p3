@@ -1,7 +1,5 @@
 #**ChattyChatChatProject**
-
-#Descritpion
-*Chat Server that allows private and public messages between users
+*This project is a basic chat server which sends private and public messages between users
 
 #Server Files
 * ChattyChatChatServer.java
