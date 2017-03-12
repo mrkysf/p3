@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CCCS 
+public class CCCS
 {
 	private static ServerSocket server;
 
@@ -17,14 +17,15 @@ public class CCCS
 	{
 		try
 		{
-			//			if(args.length < 1)
-			//			{
-			//				System.out.println("No port number entered. Now exiting.");
-			//				System.exit(-1);
-			//			}
-			//			
-			//			int portNumber = Integer.parseInt(args[0]);
-			int portNumber = 7777;
+			if(args.length < 1)
+			{
+				System.out.println("No port number entered. Now exiting.");
+				System.exit(-1);
+			}
+
+			int portNumber = Integer.parseInt(args[0]);
+			
+			//int portNumber = 7777;
 
 			server = new ServerSocket(portNumber);
 
@@ -76,15 +77,25 @@ public class CCCS
 				input = new ObjectInputStream(socket.getInputStream());
 
 				output = new ObjectOutputStream(socket.getOutputStream());
-
+				
 
 				output.writeObject("Enter Your Nickname:");
 				name = (String) input.readObject();
-				name = name.trim();
+				//name cannot contain spaces
+				Pattern p = Pattern.compile("\\s");
+				Matcher m = p.matcher(name);
+				boolean hasSpaces = m.find();
+				
 				if (name == null) 
 				{
 					name = "anonymous";
-				}					
+				}			
+				else if(hasSpaces)
+				{
+					name = null;
+					System.out.println("Nickname cannot contain spaces");
+					return;
+				}
 
 				output.writeObject("Your nickname is: " + name);
 
