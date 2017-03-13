@@ -32,7 +32,7 @@ public final class ServiceDataProvider {
 		services.remove(serviceType);
 	}
 	
-	public <T extends Object> T get_service(Class<T> serviceType) {
+	public <T> T get_service(Class<T> serviceType) {
 		return serviceType.cast(services.get(serviceType));
 	}
 }
