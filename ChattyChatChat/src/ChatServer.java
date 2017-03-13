@@ -80,7 +80,7 @@ public final class ChatServer {
 				}
 			}
 		} 
-		catch (IOException e)          {}
-		catch (InterruptedException e) {}
+		catch (IOException e)          {e.printStackTrace();}
+		catch (InterruptedException e) {e.printStackTrace();}
 	}
 }
