@@ -7,10 +7,10 @@ import java.net.Socket;
  * Implementation of Client Listener thread that will listen
  * for Client requests on the Server.
  */
-public final class ClientListener extends Thread {
+final class ClientListener extends Thread {
 
 	private String              name;
-	private Socket              socket;
+	private final Socket              socket;
 	private ObjectInputStream   input;
 	private ObjectOutputStream  output;
 	private ServiceDataProvider serviceProvider;

@@ -26,8 +26,8 @@ public final class ServerMessageCommand implements ICommand {
 
 	private static final long serialVersionUID = 8381604433324171629L;
 	
-	private String message;
-	private String recipient;
+	private final String message;
+	private final String recipient;
 	
 	/**
 	 * ServerMessageCommand constructor

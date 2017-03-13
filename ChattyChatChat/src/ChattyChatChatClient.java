@@ -3,7 +3,7 @@ import java.io.IOException;
 /**
  * Entry point for Chat Client
  */
-public final class ChattyChatChatClient {
+final class ChattyChatChatClient {
 
 	public static void main(String[] args) throws IOException, MissingArgumentException, InterruptedException {
 		 

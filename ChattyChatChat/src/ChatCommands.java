@@ -12,7 +12,7 @@ public enum ChatCommands {
 	QUIT             ("^/quit$")                ,
 	NONE             (null)                     ;
 	
-	private String commandRegex;
+	private final String commandRegex;
 	
 	ChatCommands(String cmdRegex) {
 		this.commandRegex = cmdRegex;

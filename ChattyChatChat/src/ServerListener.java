@@ -7,13 +7,13 @@ import java.net.Socket;
  * Implementation of Server Listener thread that will listen
  * for Server commands and executes them on the Client.
  */
-public final class ServerListener extends Thread {
+final class ServerListener extends Thread {
 
-	private Socket              socket;
+	private final Socket              socket;
 	private ObjectInputStream   input;
 	private ServiceDataProvider serviceProvider;
 	
-	public ServerListener (Socket socket, ServiceDataProvider provider) throws IOException {
+	private ServerListener(Socket socket, ServiceDataProvider provider) throws IOException {
 		this.socket          = socket;
 		this.input           = new ObjectInputStream(this.socket.getInputStream());
 		this.serviceProvider = new ServiceDataProvider(provider);

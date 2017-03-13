@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CCCS
+class CCCS
 {
 	private static ServerSocket server;
 
-	private static ArrayList<ThreadedSocket> threads = new ArrayList<ThreadedSocket>();
+	private static final ArrayList<ThreadedSocket> threads = new ArrayList<ThreadedSocket>();
 
 	public static void main(String[] args) throws Exception 
 	{
@@ -61,7 +61,7 @@ public class CCCS
 	private static class ThreadedSocket extends Thread 
 	{
 		private String name;
-		private Socket socket;
+		private final Socket socket;
 		ObjectInputStream input; 
 		ObjectOutputStream output;
 

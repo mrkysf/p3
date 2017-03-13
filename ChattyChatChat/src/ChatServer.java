@@ -7,10 +7,10 @@ import java.util.List;
 /**
  * ChattyChatChat Server Implementation
  */
-public final class ChatServer {
+final class ChatServer {
 
-	private int                  port;
-	private List<ClientListener> clients;
+	private final int                  port;
+	private final List<ClientListener> clients;
 	private ServerSocket         serverSocket;
 	private ServiceDataProvider  serviceProvider;
 	
@@ -22,7 +22,7 @@ public final class ChatServer {
 		this.serviceProvider.add_service(ChatServer.class, this);
 	}
 	
-	public synchronized void add_client(ClientListener client) {
+	private synchronized void add_client(ClientListener client) {
 		clients.add(client);
 	}
 	
@@ -63,7 +63,7 @@ public final class ChatServer {
 	 * Closes {@link #serverSocket}, if it is still open; then, it aborts
 	 * all {@link #clients} and waits for their threads to die.
 	 */
-	public void stop() {
+	private void stop() {
 		try {
 			System.out.println("Stopping ChatServer...");
 			if (!this.serverSocket.isClosed()) {

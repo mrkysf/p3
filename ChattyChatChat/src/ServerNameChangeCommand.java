@@ -23,7 +23,7 @@ public final class ServerNameChangeCommand implements ICommand {
 
 	private static final long serialVersionUID = 6419127542397490920L;
 
-	private String newName;
+	private final String newName;
 	
 	/**
 	 * ServerNameChangeCommand constructor

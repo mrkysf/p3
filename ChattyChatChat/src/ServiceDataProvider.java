@@ -11,11 +11,11 @@ import java.util.Map;
  * a new instance is added for an existing type, it will replace the 
  * saved instance.
  */
-public final class ServiceDataProvider {
+final class ServiceDataProvider {
 
-	private Map<Class<?>, Object> services;
+	private final Map<Class<?>, Object> services;
 	
-	public ServiceDataProvider() {
+	private ServiceDataProvider() {
 		services = new HashMap<Class<?>, Object>();
 	}
 	
