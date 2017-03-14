@@ -9,18 +9,18 @@ import java.util.Scanner;
 /**
  * ChattyChatChat Client Implementation
  */
-public final class ChatClient {
+final class ChatClient {
 
-	private String              hostname;
-	private int                 port;
+	private final String              hostname;
+	private final int                 port;
 	private Socket              clientSocket;
 	private ObjectOutputStream  socketOutput;
 	private ServerListener      serverListener;
-	private Scanner             standardInput;
-	private PrintStream         standardOutput;
+	private final Scanner             standardInput;
+	private final PrintStream         standardOutput;
 	private ServiceDataProvider serviceProvider;
-	
-	public ChatClient(String host, int portNumber) throws UnknownHostException, IOException {
+
+	public ChatClient(String host, int portNumber) throws IOException {
 		this.hostname        = host;
 		this.port            = portNumber;
 		this.standardInput   = new Scanner(System.in);
@@ -48,7 +48,7 @@ public final class ChatClient {
 	 *             Any thread has interrupted the {@link #serverListener}
 	 *             thread.
 	 */
-	public void start() throws IOException, InterruptedException {
+	public void start() throws IOException {
 		try {
 			// Start ServerListener on separate thread to listen for commands 
 			// coming from server	
@@ -82,7 +82,7 @@ public final class ChatClient {
 	 * Closes {@link #clientSocket}, if it is still open, along with all its
 	 * streams.
 	 */
-	public synchronized void stop() {
+	private synchronized void stop() {
 		try {
 			if (!this.clientSocket.isClosed()) {
 				System.out.println("Closing client socket...");
@@ -90,7 +90,9 @@ public final class ChatClient {
 				this.clientSocket.getInputStream().close();
 				this.clientSocket.close();
 			}
-		} catch (IOException ex) {}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	/**
